@@ -1,5 +1,13 @@
 # 🌐 KalimaFix  
 
+![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)  
+![License](https://img.shields.io/github/license/MohamedAliShaltoot/KalimaFix?style=for-the-badge)  
+![Stars](https://img.shields.io/github/stars/MohamedAliShaltoot/KalimaFix?style=for-the-badge)  
+![Forks](https://img.shields.io/github/forks/MohamedAliShaltoot/KalimaFix?style=for-the-badge)  
+![Issues](https://img.shields.io/github/issues/MohamedAliShaltoot/KalimaFix?style=for-the-badge)  
+![Last Commit](https://img.shields.io/github/last-commit/MohamedAliShaltoot/KalimaFix?style=for-the-badge)  
+
+
 هل كتبت مرة بالعربي واكتشفت إن الكيبورد كان إنجليزي (أو العكس)؟  
 فتلاقي الكلام اللي كتبته مش مفهوم خالص 🤯  
 هنا ييجي دور **KalimaFix**: التطبيق البسيط والذكي اللي بيرجعلك النص اللي كنت تقصده فعلًا ✨.  
