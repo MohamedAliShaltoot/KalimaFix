@@ -1,16 +1,50 @@
-# kalima_fix
+# 🌐 KalimaFix  
 
-A new Flutter project.
+هل كتبت مرة بالعربي واكتشفت إن الكيبورد كان إنجليزي (أو العكس)؟  
+فتلاقي الكلام اللي كتبته مش مفهوم خالص 🤯  
+هنا ييجي دور **KalimaFix**: التطبيق البسيط والذكي اللي بيرجعلك النص اللي كنت تقصده فعلًا ✨.  
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## 🚀 المميزات
+- 🔄 **التحويل بين العربية والإنجليزية** بسهولة (عربي ➝ إنجليزي والعكس).  
+- 📋 **لصق النصوص مباشرة** من الكليب بورد.  
+- 📑 **نسخ النصوص المحوّلة** بضغطة زر.  
+- ⚡ **وضع التحويل التلقائي**: أي كتابة تتحول في نفس اللحظة.  
+- 🖊️ **الوضع اليدوي**: اكتب النص بالكامل وبعدين حوّله دفعة واحدة.  
+- 🌙 **الوضع الليلي (Dark Theme)** و ☀️ **الوضع الفاتح (Light Theme)**.  
+- 🕑 **صفحة تاريخ التحويلات**: عشان تقدر ترجع لأي نص حولته قبل كده.  
+- 🧹 **اختصارات سريعة (Shortcuts)** من الـ AppBar لمسح النصوص أو إدارة التخزين.  
+- 🔄 **تحديثات مستمرة** لإضافة مميزات جديدة ومبتكرة.  
 
-A few resources to get you started if this is your first Flutter project:
+---
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## 📸 صور من التطبيق
+<div align="center">
+  <img src="assets/images/app_logo.png" alt="KalimaFix App Icon" width="300"/>
+  <img src="assets/images/light_theme.jpg" alt="Light Theme" width="300"/>
+  <img src="assets/images/dark_theme.jpg" alt="Dark Theme" width="300"/>
+  <img src="assets/images/transformation_histroy.jpg" alt="History Page" width="300"/>
+  <img src="assets/images/no_histroy_found.jpg" alt="No History Found" width="300"/>
+</div>
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+---
+
+
+---
+
+## 🛠️ المستقبل
+- دعم لغات إضافية.  
+- إضافة Widgets أسرع للتحويل من أي مكان.  
+- تحسينات على الأداء وتجربة المستخدم.  
+- مزامنة التحويلات مع Cloud.  
+
+---
+
+## 🤝 المساهمة
+لو عندك أفكار أو اقتراحات أو حابب تضيف ميزة،  
+افتح Issue أو اعمل Pull Request على الريبو ✨  
+
+---
+ 
+
