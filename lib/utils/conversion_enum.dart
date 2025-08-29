@@ -1,1 +1,0 @@
-enum ConversionDirection { enToAr, arToEn }
