@@ -1,4 +1,4 @@
-import 'package:kalima_fix/utils/conversion_enum.dart';
+import 'package:kalima_fix/core/utils/conversion_enum.dart';
 
 abstract class KeyboardFixState {}
 
