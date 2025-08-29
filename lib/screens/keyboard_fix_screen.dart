@@ -1,53 +1,48 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kalima_fix/cubit/keyboard_fix.dart';
+import 'package:kalima_fix/core/utils/app_constants.dart';
+import 'package:kalima_fix/cubit/keyboard_fix_cubit.dart';
+import 'package:kalima_fix/cubit/keyboard_fix_states.dart';
 import 'package:kalima_fix/screens/history_screen.dart';
+import 'package:kalima_fix/core/utils/conversion_enum.dart';
+import 'package:kalima_fix/core/reusable_widgets/custom_elevated_btn.dart';
+import 'package:kalima_fix/core/reusable_widgets/global_circular_indicator.dart';
+import 'package:kalima_fix/core/reusable_widgets/global_snack_bar.dart';
 
-
-class KeyboardFixScreen extends StatefulWidget {
+class KeyboardFixScreen extends StatelessWidget {
   const KeyboardFixScreen({super.key});
-
-  @override
-  State<KeyboardFixScreen> createState() => _KeyboardFixScreenState();
-}
-
-class _KeyboardFixScreenState extends State<KeyboardFixScreen> {
-  final TextEditingController _inputController = TextEditingController();
-  final TextEditingController _outputController = TextEditingController();
-
-  @override
-  void dispose() {
-    _inputController.dispose();
-    _outputController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<KeyboardFixCubit, KeyboardFixState>(
       listener: (context, state) {
         if (state is KeyboardFixLoaded) {
-          if (_inputController.text != state.inputText) {
-            _inputController.text = state.inputText;
+          if (KeyboardFixCubit.get(context).inputController.text !=
+              state.inputText) {
+            KeyboardFixCubit.get(context).inputController.text =
+                state.inputText;
           }
-          _outputController.text = state.convertedText;
+          KeyboardFixCubit.get(context).outputController.text =
+              state.convertedText;
         }
       },
       builder: (context, state) {
         if (state is! KeyboardFixLoaded) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
+          return const Scaffold(body: GlobalCircularIndicator());
         }
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text("Keyboard Fix"),
-            centerTitle: true,
+            title: const Text(
+              AppConstants.appName,
+              style: TextStyle(fontWeight: FontWeight.w700),
+            ),
+
             actions: [
               IconButton(
-                onPressed: () => context.read<KeyboardFixCubit>().toggleTheme(),
+                onPressed: () => KeyboardFixCubit.get(context).toggleTheme(),
                 icon: Icon(
                   state.isDarkMode ? Icons.light_mode : Icons.dark_mode,
                 ),
@@ -63,38 +58,40 @@ class _KeyboardFixScreenState extends State<KeyboardFixScreen> {
                 icon: const Icon(Icons.history),
               ),
               PopupMenuButton<String>(
+                tooltip: AppConstants.moreOptionsTitle,
+                icon: const Icon(Icons.more_vert_rounded),
                 onSelected: (value) {
                   switch (value) {
                     case 'clear_all':
-                      context.read<KeyboardFixCubit>().clearText();
+                      KeyboardFixCubit.get(context).clearText();
                       break;
                     case 'clear_history':
-                      context.read<KeyboardFixCubit>().clearHistory();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('تم مسح السجل')),
-                      );
+                      KeyboardFixCubit.get(context).clearHistory();
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(displaySnackBar(message: AppConstants.historyCleared));
                       break;
                   }
                 },
                 itemBuilder:
                     (context) => [
-                      const PopupMenuItem(
+                       PopupMenuItem(
                         value: 'clear_all',
                         child: Row(
                           children: [
                             Icon(Icons.clear_all),
                             SizedBox(width: 8),
-                            Text('مسح النصوص'),
+                            Text(AppConstants.clearInputs),
                           ],
                         ),
                       ),
-                      const PopupMenuItem(
+                       PopupMenuItem(
                         value: 'clear_history',
                         child: Row(
                           children: [
                             Icon(Icons.history_toggle_off),
                             SizedBox(width: 8),
-                            Text('مسح السجل'),
+                            Text(AppConstants.clearHistory),
                           ],
                         ),
                       ),
@@ -102,234 +99,288 @@ class _KeyboardFixScreenState extends State<KeyboardFixScreen> {
               ),
             ],
           ),
-          body: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                // إعدادات التحويل
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              "اتجاه التحويل:",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  state.direction == ConversionDirection.enToAr
-                                      ? "إنجليزي → عربي"
-                                      : "عربي → إنجليزي",
-                                ),
-                                IconButton(
-                                  onPressed:
-                                      () =>
-                                          context
-                                              .read<KeyboardFixCubit>()
-                                              .toggleDirection(),
-                                  icon: const Icon(Icons.swap_horiz),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        const Divider(),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              "التحويل التلقائي:",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            Switch(
-                              value: state.autoConvert,
-                              onChanged:
-                                  (value) =>
-                                      context
-                                          .read<KeyboardFixCubit>()
-                                          .toggleAutoConvert(),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // حقل النص المدخل
-                Expanded(
-                  child: Card(
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(12),
+            child: SizedBox(
+              height:
+                  MediaQuery.of(context).size.height -
+                  AppBar().preferredSize.height -
+                  MediaQuery.of(context).padding.top -
+                  24,
+              child: Column(
+                children: [
+                  // إعدادات التحويل - أكثر إيجازاً
+                  Card(
                     child: Padding(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                "النص الأصلي:",
-                                style: Theme.of(context).textTheme.titleMedium,
+                               Text(
+                                AppConstants.conversionDirection,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
                               ),
                               Row(
                                 children: [
-                                  IconButton(
-                                    onPressed: () async {
-                                      final data = await Clipboard.getData(
-                                        'text/plain',
-                                      );
-                                      if (data?.text != null) {
-                                        context
-                                            .read<KeyboardFixCubit>()
-                                            .updateInputText(data!.text!);
-                                      }
-                                    },
-                                    icon: const Icon(Icons.content_paste),
-                                    tooltip: "لصق",
+                                  Text(
+                                    state.direction ==
+                                            ConversionDirection.enToAr
+                                        ? AppConstants.conversionEnToAr
+                                        : AppConstants.conversionArToEn,
+                                    style: const TextStyle(fontSize: 13),
                                   ),
                                   IconButton(
+                                    constraints: const BoxConstraints(
+                                      minWidth: 32,
+                                      minHeight: 32,
+                                    ),
+                                    padding: const EdgeInsets.all(4),
                                     onPressed:
                                         () =>
-                                            context
-                                                .read<KeyboardFixCubit>()
-                                                .clearText(),
-                                    icon: const Icon(Icons.clear),
-                                    tooltip: "مسح",
+                                            KeyboardFixCubit.get(
+                                              context,
+                                            ).toggleDirection(),
+                                    icon: const Icon(
+                                      Icons.swap_horiz,
+                                      size: 20,
+                                    ),
                                   ),
                                 ],
                               ),
                             ],
                           ),
-                          const SizedBox(height: 8),
-                          Expanded(
-                            child: TextField(
-                              controller: _inputController,
-                              maxLines: null,
-                              expands: true,
-                              textAlignVertical: TextAlignVertical.top,
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                hintText: "ادخل النص هنا...",
-                              ),
-                              onChanged:
-                                  (text) => context
-                                      .read<KeyboardFixCubit>()
-                                      .updateInputText(text),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // أزرار التحكم
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ElevatedButton.icon(
-                      onPressed:
-                          () => context.read<KeyboardFixCubit>().convertText(),
-                      icon: const Icon(Icons.transform),
-                      label: const Text("تحويل"),
-                    ),
-                    ElevatedButton.icon(
-                      onPressed:
-                          () => context.read<KeyboardFixCubit>().swapTexts(),
-                      icon: const Icon(Icons.swap_vert),
-                      label: const Text("تبديل"),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-
-                // حقل النتيجة
-                Expanded(
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                "النتيجة:",
-                                style: Theme.of(context).textTheme.titleMedium,
+                                AppConstants.autoConversion,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
                               ),
-                              IconButton(
-                                onPressed:
-                                    state.convertedText.isNotEmpty
-                                        ? () {
-                                          Clipboard.setData(
-                                            ClipboardData(
-                                              text: state.convertedText,
-                                            ),
-                                          );
-                                          ScaffoldMessenger.of(
-                                            context,
-                                          ).showSnackBar(
-                                            const SnackBar(
-                                              content: Text('تم النسخ!'),
-                                            ),
-                                          );
-                                        }
-                                        : null,
-                                icon: const Icon(Icons.copy),
-                                tooltip: "نسخ",
+                              Switch(
+                                value: state.autoConvert,
+                                onChanged:
+                                    (value) =>
+                                        KeyboardFixCubit.get(
+                                          context,
+                                        ).toggleAutoConvert(),
                               ),
                             ],
-                          ),
-                          const SizedBox(height: 8),
-                          Expanded(
-                            child: Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Theme.of(context).colorScheme.outline,
-                                ),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: SingleChildScrollView(
-                                child: SelectableText(
-                                  state.convertedText.isEmpty
-                                      ? "النتيجة ستظهر هنا..."
-                                      : state.convertedText,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color:
-                                        state.convertedText.isEmpty
-                                            ? Theme.of(
-                                              context,
-                                            ).colorScheme.onSurfaceVariant
-                                            : null,
-                                  ),
-                                ),
-                              ),
-                            ),
                           ),
                         ],
                       ),
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 8),
+
+                  // حقل النص المدخل - حجم أكبر
+                  Expanded(
+                    flex: 4,
+                    child: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  AppConstants.originalText,
+                                  style: Theme.of(context).textTheme.titleSmall
+                                      ?.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                                Row(
+                                  children: [
+                                    IconButton(
+                                      constraints: const BoxConstraints(
+                                        minWidth: 32,
+                                        minHeight: 32,
+                                      ),
+                                      padding: const EdgeInsets.all(4),
+                                      onPressed: () async {
+                                        final data = await Clipboard.getData(
+                                          'text/plain',
+                                        );
+                                        if (data?.text != null) {
+                                          KeyboardFixCubit.get(
+                                            context,
+                                          ).updateInputText(data!.text!);
+                                        }
+                                      },
+                                      icon: const Icon(
+                                        Icons.content_paste,
+                                        size: 18,
+                                      ),
+                                      tooltip: AppConstants.paste,
+                                    ),
+                                    IconButton(
+                                      constraints: const BoxConstraints(
+                                        minWidth: 32,
+                                        minHeight: 32,
+                                      ),
+                                      padding: const EdgeInsets.all(4),
+                                      onPressed:
+                                          () =>
+                                              KeyboardFixCubit.get(
+                                                context,
+                                              ).clearText(),
+                                      icon: const Icon(Icons.clear, size: 18),
+                                      tooltip: AppConstants.clear,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Expanded(
+                              child: TextField(
+                                controller:
+                                    KeyboardFixCubit.get(
+                                      context,
+                                    ).inputController,
+                                maxLines: null,
+                                expands: true,
+                                textAlignVertical: TextAlignVertical.top,
+                                style: const TextStyle(fontSize: 16),
+                                decoration:  InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  hintText: AppConstants.enterOriginalTextHere,
+                                  contentPadding: EdgeInsets.all(12),
+                                ),
+                                onChanged:
+                                    (text) => KeyboardFixCubit.get(
+                                      context,
+                                    ).updateInputText(text),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  // أزرار التحكم - أصغر
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      CustomElevatedButton(
+                        btnName: AppConstants.convert,
+                        icon: Icons.transform,
+                        onPressed:
+                            () => KeyboardFixCubit.get(context).convertText(),
+                      ),
+                      CustomElevatedButton(
+                        btnName: AppConstants.swap,
+                        icon: Icons.swap_vert,
+                        onPressed:
+                            () => KeyboardFixCubit.get(context).swapTexts(),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+
+                  // حقل النتيجة - حجم أكبر
+                  Expanded(
+                    flex: 4,
+                    child: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  AppConstants.theResult,
+                                  style: Theme.of(context).textTheme.titleSmall
+                                      ?.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                                IconButton(
+                                  constraints: const BoxConstraints(
+                                    minWidth: 32,
+                                    minHeight: 32,
+                                  ),
+                                  padding: const EdgeInsets.all(4),
+                                  onPressed:
+                                      state.convertedText.isNotEmpty
+                                          ? () {
+                                            Clipboard.setData(
+                                              ClipboardData(
+                                                text: state.convertedText,
+                                              ),
+                                            );
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              displaySnackBar(
+                                                message: AppConstants.copyComplete,
+                                              ),
+                                            );
+                                          }
+                                          : null,
+                                  icon: const Icon(Icons.copy, size: 18),
+                                  tooltip: AppConstants.copy,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Expanded(
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color:
+                                        Theme.of(context).colorScheme.outline,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: SingleChildScrollView(
+                                  child: SelectableText(
+                                    state.convertedText.isEmpty
+                                        ? AppConstants.theResultWillShowHere
+                                        : state.convertedText,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      height: 1.4,
+                                      color:
+                                          state.convertedText.isEmpty
+                                              ? Theme.of(
+                                                context,
+                                              ).colorScheme.onSurfaceVariant
+                                              : null,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           floatingActionButton:
               state.inputText.isNotEmpty
                   ? FloatingActionButton(
                     onPressed:
-                        () => context.read<KeyboardFixCubit>().convertText(),
+                        () => KeyboardFixCubit.get(context).convertText(),
                     child: const Icon(Icons.play_arrow),
                   )
                   : null,
