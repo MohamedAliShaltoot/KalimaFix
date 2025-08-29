@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kalima_fix/cubit/keyboard_fix_states.dart';
@@ -52,6 +51,13 @@ class KeyboardFixCubit extends Cubit<KeyboardFixState> {
     "\\": "\\",
     " ": " ",
     "\n": "\n",
+    "Q": "َ",
+    "W": "ً",
+    "E": "ُ",
+    "S": "ٍ",
+    "A": "ِ",
+    "R": "ٌ",
+    "Y": "إ",
   };
 
   static final Map<String, String> _arToEn = {
@@ -199,5 +205,18 @@ class KeyboardFixCubit extends Cubit<KeyboardFixState> {
       final currentState = state as KeyboardFixLoaded;
       emit(currentState.copyWith(inputText: parts[0], convertedText: parts[1]));
     }
+  }
+
+
+  void removeFromHistory(String conversion) async {
+    final currentState = state as KeyboardFixLoaded;
+    final newHistory = List<String>.from(currentState.history);
+
+    newHistory.remove(conversion);
+
+    emit(currentState.copyWith(history: newHistory));
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('history', newHistory);
   }
 }
