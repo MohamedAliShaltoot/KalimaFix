@@ -49,7 +49,9 @@ class HistoryScreen extends StatelessWidget {
                       builder:
                           (context) => AlertDialog(
                             title: const Text(AppConstants.confirm),
-                            content: const Text(AppConstants.clearHistoryConfirmation),
+                            content: const Text(
+                              AppConstants.clearHistoryConfirmation,
+                            ),
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.pop(context),
@@ -60,10 +62,12 @@ class HistoryScreen extends StatelessWidget {
                                   KeyboardFixCubit.get(context).clearHistory();
                                   Navigator.pop(context);
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    displaySnackBar(message: AppConstants.historyCleared),
+                                    displaySnackBar(
+                                      message: AppConstants.historyCleared,
+                                    ),
                                   );
                                 },
-                                child:  Text(AppConstants.clearHistory),
+                                child: Text(AppConstants.clearHistory),
                               ),
                             ],
                           ),
@@ -100,7 +104,7 @@ class HistoryScreen extends StatelessWidget {
                       width: 250,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
-                        
+
                         image: DecorationImage(
                           image: AssetImage(AppStrings.notFoundImage),
                           fit: BoxFit.fill,
@@ -142,12 +146,10 @@ class HistoryScreen extends StatelessWidget {
                 ),
                 onDismissed: (_) {
                   // here i want only delete the specific item
-                 KeyboardFixCubit.get(context).clearHistory();
+                  KeyboardFixCubit.get(context).removeFromHistory(conversion);
 
                   ScaffoldMessenger.of(context).showSnackBar(
-                    displaySnackBar(
-                      message: AppConstants.itemDeleted,
-                    ),
+                    displaySnackBar(message: AppConstants.itemDeleted),
                   );
                 },
                 child: Card(
@@ -165,12 +167,10 @@ class HistoryScreen extends StatelessWidget {
                           onPressed: () {
                             KeyboardFixCubit.get(
                               context,
-                            ).loadFromHistory(
-                              conversion,
-                            );
+                            ).loadFromHistory(conversion);
                             Navigator.pop(context);
                             ScaffoldMessenger.of(context).showSnackBar(
-                             displaySnackBar(
+                              displaySnackBar(
                                 message: AppConstants.conversionLoaded,
                               ),
                             );
@@ -178,16 +178,14 @@ class HistoryScreen extends StatelessWidget {
                           icon: const Icon(Icons.download_done),
                           tooltip: AppConstants.loadToolTipTitle,
                         ),
-                        const Icon(Icons.arrow_forward_ios, size: 16),
+                        // const Icon(Icons.arrow_forward_ios, size: 16),
                       ],
                     ),
                     onTap: () {
-                       KeyboardFixCubit.get(context).loadFromHistory(
-                        conversion,
-                      );
+                      KeyboardFixCubit.get(context).loadFromHistory(conversion);
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        displaySnackBar(message: AppConstants.conversionLoaded)
+                        displaySnackBar(message: AppConstants.conversionLoaded),
                       );
                     },
                   ),
