@@ -381,12 +381,15 @@ class KeyboardFixScreen extends StatelessWidget {
               state.inputText.isNotEmpty
                   ? FloatingActionButton(
                     tooltip: AppConstants.convert,
-                    shape: const CircleBorder(
-                      side: BorderSide(color: Colors.white, width: 2),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     onPressed:
                         () => KeyboardFixCubit.get(context).convertText(),
-                    child: const Icon(Icons.sync_alt_rounded),
+                    child: const Icon(
+                      Icons.send,
+                      color: Color.fromARGB(255, 5, 121, 9),
+                    ),
                   )
                   : null,
         );
