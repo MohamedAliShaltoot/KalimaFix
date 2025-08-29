@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kalima_fix/cubit/keyboard_fix.dart';
+import 'package:kalima_fix/core/utils/app_constants.dart';
+import 'package:kalima_fix/cubit/keyboard_fix_cubit.dart';
+import 'package:kalima_fix/cubit/keyboard_fix_states.dart';
+import 'package:kalima_fix/screens/splash_screen.dart';
 
-import 'screens/keyboard_fix_screen.dart';
 
 void main() {
   runApp(const KeyboardFixApp());
@@ -25,8 +27,10 @@ class KeyboardFixApp extends StatelessWidget {
 
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            title: 'Keyboard Fix',
+            title: AppConstants.appName,
+
             theme: ThemeData(
+              fontFamily: AppConstants.fontFamily,
               colorScheme: ColorScheme.fromSeed(
                 seedColor: Colors.blue,
                 brightness: Brightness.light,
@@ -41,7 +45,7 @@ class KeyboardFixApp extends StatelessWidget {
               useMaterial3: true,
             ),
             themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-            home: const KeyboardFixScreen(),
+            home: const SplashScreen(),
           );
         },
       ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:kalima_fix/main.dart';
+
 import 'package:kalima_fix/screens/keyboard_fix_screen.dart';
 
 class SplashScreen extends StatefulWidget {
