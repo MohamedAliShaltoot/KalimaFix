@@ -67,15 +67,15 @@ class KeyboardFixScreen extends StatelessWidget {
                       break;
                     case 'clear_history':
                       KeyboardFixCubit.get(context).clearHistory();
-                      ScaffoldMessenger.of(
-                        context,
-                      ).showSnackBar(displaySnackBar(message: AppConstants.historyCleared));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        displaySnackBar(message: AppConstants.historyCleared),
+                      );
                       break;
                   }
                 },
                 itemBuilder:
                     (context) => [
-                       PopupMenuItem(
+                      PopupMenuItem(
                         value: 'clear_all',
                         child: Row(
                           children: [
@@ -85,7 +85,7 @@ class KeyboardFixScreen extends StatelessWidget {
                           ],
                         ),
                       ),
-                       PopupMenuItem(
+                      PopupMenuItem(
                         value: 'clear_history',
                         child: Row(
                           children: [
@@ -121,7 +121,7 @@ class KeyboardFixScreen extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                               Text(
+                              Text(
                                 AppConstants.conversionDirection,
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
@@ -253,7 +253,7 @@ class KeyboardFixScreen extends StatelessWidget {
                                 expands: true,
                                 textAlignVertical: TextAlignVertical.top,
                                 style: const TextStyle(fontSize: 16),
-                                decoration:  InputDecoration(
+                                decoration: InputDecoration(
                                   border: OutlineInputBorder(),
                                   hintText: AppConstants.enterOriginalTextHere,
                                   contentPadding: EdgeInsets.all(12),
@@ -326,7 +326,8 @@ class KeyboardFixScreen extends StatelessWidget {
                                               context,
                                             ).showSnackBar(
                                               displaySnackBar(
-                                                message: AppConstants.copyComplete,
+                                                message:
+                                                    AppConstants.copyComplete,
                                               ),
                                             );
                                           }
@@ -379,9 +380,13 @@ class KeyboardFixScreen extends StatelessWidget {
           floatingActionButton:
               state.inputText.isNotEmpty
                   ? FloatingActionButton(
+                    tooltip: AppConstants.convert,
+                    shape: const CircleBorder(
+                      side: BorderSide(color: Colors.white, width: 2),
+                    ),
                     onPressed:
                         () => KeyboardFixCubit.get(context).convertText(),
-                    child: const Icon(Icons.play_arrow),
+                    child: const Icon(Icons.sync_alt_rounded),
                   )
                   : null,
         );
